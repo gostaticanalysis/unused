@@ -72,10 +72,32 @@ func skip(o types.Object) bool {
 
 		// method
 		sig, ok := o.Type().(*types.Signature)
-		if ok && sig.Recv() != nil {
-			return true
+		if ok {
+			if recv := sig.Recv(); recv != nil {
+				for _, i := range interfaces(o.Pkg()) {
+					if types.Implements(recv.Type(), i) {
+						return true
+					}
+				}
+			}
 		}
 	}
 
 	return false
+}
+
+func interfaces(pkg *types.Package) []*types.Interface {
+	var ifs []*types.Interface
+
+	for _, n := range pkg.Scope().Names() {
+		o := pkg.Scope().Lookup(n)
+		if o != nil {
+			i, ok := o.Type().(*types.Interface)
+			if ok {
+				ifs = append(ifs, i)
+			}
+		}
+	}
+
+	return ifs
 }

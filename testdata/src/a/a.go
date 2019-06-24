@@ -21,8 +21,13 @@ type S struct {
 	f3  int // Use
 }
 
-func (S) m1() {} // OK because a method may be used as an interface's method
+func (S) m1() {} // want "m1 is unused"
 func (S) M2() {} // OK
+func (S) m3() {} // OK
+
+type Interface interface {
+	m3()
+}
 
 var (
 	i int // want "i is unused"
