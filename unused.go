@@ -9,16 +9,17 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
+// Analyzer find unused identifyers.
 var Analyzer = &analysis.Analyzer{
 	Name: "unused",
-	Doc:  Doc,
+	Doc:  doc,
 	Run:  run,
 	Requires: []*analysis.Analyzer{
 		inspect.Analyzer,
 	},
 }
 
-const Doc = "unused find unused identifyers"
+const doc = "unused find unused identifyers"
 
 func run(pass *analysis.Pass) (interface{}, error) {
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
