@@ -51,11 +51,14 @@ func run(pass *analysis.Pass) (interface{}, error) {
 }
 
 func skip(o types.Object) bool {
-	if o == nil {
+
+	if o == nil || o.Parent() == types.Universe {
 		return true
 	}
 
 	switch o := o.(type) {
+	case *types.PkgName:
+		return true
 	case *types.Var:
 		if o.Anonymous() {
 			return true

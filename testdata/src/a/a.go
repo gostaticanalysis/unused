@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 const (
 	c1 = 100 // want "c1 is unused"
 	C2 = 200 // OK
@@ -47,3 +49,12 @@ var _ = func() struct{} {
 	_ = S{f3: 100}
 	return struct{}{}
 }()
+
+// builtin
+var _ string = ""
+var _ = func() struct{} {
+	print() // OK
+	return struct{}{}
+}()
+
+var _, _ = fmt.Printf("") // OK
