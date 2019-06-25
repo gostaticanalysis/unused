@@ -6,6 +6,7 @@ const (
 	c1 = 100 // want "c1 is unused"
 	C2 = 200 // OK
 	c3 = 300 // Use
+	c4 = 400 // Use in test
 )
 
 type (
@@ -37,10 +38,13 @@ var (
 	_ int // OK
 )
 
-func f()    {} // want "f is unused"
-func G()    {} // OK
-func init() {} // OK
-func main() {} // OK main.main
+func f()       {}          // want "f is unused"
+func G()       {}          // OK
+func init()    {}          // OK
+func main()    {}          // OK main.main
+func F1(a int) {}          // want "a is unused"
+func F2(_ int) {}          // OK
+func F3(a int) { a = 100 } // OK
 
 // use
 var _ = func() struct{} {
