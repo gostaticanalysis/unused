@@ -64,12 +64,6 @@ func skip(o types.Object) bool {
 			o.Pkg().Scope() != o.Parent() {
 			return true
 		}
-		/*
-			if o.Anonymous() ||
-				(o.IsField() && isInterface(o.Type().Underlying())) {
-				return true
-			}
-		*/
 	case *types.Func:
 		// main
 		if o.Name() == "main" && o.Pkg().Name() == "main" {
