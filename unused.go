@@ -116,8 +116,3 @@ func has(intf *types.Interface, m *types.Func) bool {
 	}
 	return false
 }
-
-func isInterface(t types.Type) bool {
-	_, ok := t.(*types.Interface)
-	return ok
-}
