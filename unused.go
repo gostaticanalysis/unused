@@ -60,9 +60,16 @@ func skip(o types.Object) bool {
 	case *types.PkgName:
 		return true
 	case *types.Var:
-		if o.Anonymous() {
+		if (!o.IsField() || o.Anonymous()) &&
+			o.Pkg().Scope() != o.Parent() {
 			return true
 		}
+		/*
+			if o.Anonymous() ||
+				(o.IsField() && isInterface(o.Type().Underlying())) {
+				return true
+			}
+		*/
 	case *types.Func:
 		// main
 		if o.Name() == "main" && o.Pkg().Name() == "main" {
@@ -114,4 +121,9 @@ func has(intf *types.Interface, m *types.Func) bool {
 		}
 	}
 	return false
+}
+
+func isInterface(t types.Type) bool {
+	_, ok := t.(*types.Interface)
+	return ok
 }

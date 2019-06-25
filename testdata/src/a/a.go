@@ -27,8 +27,12 @@ func (S) m1() {} // want "m1 is unused"
 func (S) M2() {} // OK
 func (S) m3() {} // OK
 
-type Interface interface {
-	m3()
+type I1 interface {
+	m3() // OK
+}
+
+type I2 interface {
+	m(a1 int) // OK
 }
 
 var (
@@ -37,13 +41,14 @@ var (
 	_ int // OK
 )
 
-func f()       {}          // want "f is unused"
-func G()       {}          // OK
-func init()    {}          // OK
-func main()    {}          // OK main.main
-func F1(a int) {}          // want "a is unused"
-func F2(_ int) {}          // OK
-func F3(a int) { a = 100 } // OK
+func f()          {}          // want "f is unused"
+func G()          {}          // OK
+func init()       {}          // OK
+func main()       {}          // OK main.main
+func F1(a int)    {}          // OK ignore param
+func F2(_ int)    {}          // OK
+func F3(a int)    { a = 100 } // OK
+func F4() (a int) { return }  // OK
 
 // use
 var _ = func() struct{} {
