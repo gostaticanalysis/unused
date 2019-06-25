@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gostaticanalysis/unused"
-	"golang.org/x/tools/go/analysis/singlechecker"
+	"golang.org/x/tools/go/analysis/unitchecker"
 )
 
-func main() { singlechecker.Main(unused.Analyzer) }
+func main() { unitchecker.Main(unused.Analyzer) }
