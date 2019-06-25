@@ -11,7 +11,7 @@ $ go get github.com/gostaticanalysis/unused
 ## Usage
 
 ```sh
-$ go vet -vettool=`which unsed` pkgname
+$ go vet -vettool=`which unused` pkgname
 ```
 
 <!-- links -->
