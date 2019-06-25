@@ -60,8 +60,8 @@ func skip(o types.Object) bool {
 	case *types.PkgName:
 		return true
 	case *types.Var:
-		if (!o.IsField() || o.Anonymous()) &&
-			o.Pkg().Scope() != o.Parent() {
+		if o.Pkg().Scope() != o.Parent() &&
+			!(o.IsField() && !o.Anonymous() && isFieldInNamedStruct(o)) {
 			return true
 		}
 	case *types.Func:
@@ -115,4 +115,35 @@ func has(intf *types.Interface, m *types.Func) bool {
 		}
 	}
 	return false
+}
+
+func isFieldInNamedStruct(v *types.Var) bool {
+	structs := allNamedStructs(v.Pkg())
+	for _, s := range structs {
+		for i := 0; i < s.NumFields(); i++ {
+			if s.Field(i) == v {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func allNamedStructs(pkg *types.Package) []*types.Struct {
+	var structs []*types.Struct
+
+	for _, n := range pkg.Scope().Names() {
+		o := pkg.Scope().Lookup(n)
+		if o != nil {
+			switch t := o.Type().(type) {
+			case *types.Named:
+				switch u := t.Underlying().(type) {
+				case *types.Struct:
+					structs = append(structs, u)
+				}
+			}
+		}
+	}
+
+	return structs
 }

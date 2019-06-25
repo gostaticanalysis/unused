@@ -23,6 +23,10 @@ type S struct {
 	f3  int // Use
 }
 
+var _ = struct {
+	field int // OK
+}{}
+
 func (S) m1() {} // want "m1 is unused"
 func (S) M2() {} // OK
 func (S) m3() {} // OK
