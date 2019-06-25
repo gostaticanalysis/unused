@@ -6,7 +6,6 @@ const (
 	c1 = 100 // want "c1 is unused"
 	C2 = 200 // OK
 	c3 = 300 // Use
-	c4 = 400 // Use in test
 )
 
 type (
