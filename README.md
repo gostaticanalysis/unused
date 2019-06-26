@@ -5,7 +5,7 @@
 ## Install
 
 ```sh
-$ go get github.com/gostaticanalysis/unused
+$ go get github.com/gostaticanalysis/unused/cmd/unused
 ```
 
 ## Usage
