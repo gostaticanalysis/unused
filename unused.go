@@ -3,6 +3,7 @@ package unused
 import (
 	"go/types"
 
+	"github.com/gostaticanalysis/analysisutil"
 	"github.com/gostaticanalysis/ident"
 	"golang.org/x/tools/go/analysis"
 )
@@ -59,7 +60,7 @@ func skip(o types.Object) bool {
 		sig, ok := o.Type().(*types.Signature)
 		if ok {
 			if recv := sig.Recv(); recv != nil {
-				for _, i := range interfaces(o.Pkg()) {
+				for _, i := range analysisutil.Interfaces(o.Pkg()) {
 					if i == recv.Type() ||
 						(types.Implements(recv.Type(), i) && has(i, o)) {
 						return true
@@ -70,22 +71,6 @@ func skip(o types.Object) bool {
 	}
 
 	return false
-}
-
-func interfaces(pkg *types.Package) []*types.Interface {
-	var ifs []*types.Interface
-
-	for _, n := range pkg.Scope().Names() {
-		o := pkg.Scope().Lookup(n)
-		if o != nil {
-			i, ok := o.Type().Underlying().(*types.Interface)
-			if ok {
-				ifs = append(ifs, i)
-			}
-		}
-	}
-
-	return ifs
 }
 
 func has(intf *types.Interface, m *types.Func) bool {
