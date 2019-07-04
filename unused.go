@@ -1,12 +1,10 @@
 package unused
 
 import (
-	"go/ast"
 	"go/types"
 
+	"github.com/gostaticanalysis/ident"
 	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/analysis/passes/inspect"
-	"golang.org/x/tools/go/ast/inspector"
 )
 
 // Analyzer find unused identifyers.
@@ -15,44 +13,26 @@ var Analyzer = &analysis.Analyzer{
 	Doc:  doc,
 	Run:  run,
 	Requires: []*analysis.Analyzer{
-		inspect.Analyzer,
+		ident.Analyzer,
 	},
 }
 
 const doc = "unused find unused identifyers"
 
 func run(pass *analysis.Pass) (interface{}, error) {
-	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
-
-	nodeFilter := []ast.Node{
-		(*ast.Ident)(nil),
-	}
-
-	objects := map[types.Object][]*ast.Ident{}
-	inspect.Preorder(nodeFilter, func(n ast.Node) {
-		switch n := n.(type) {
-		case *ast.Ident:
-			if !ast.IsExported(n.Name) && n.Name != "_" {
-				if o := pass.TypesInfo.ObjectOf(n); !skip(o) {
-					objects[o] = append(objects[o], n)
-				}
-			}
-		}
-	})
-
-	for o := range objects {
-		if len(objects[o]) == 1 {
-			n := objects[o][0]
+	m := pass.ResultOf[ident.Analyzer].(ident.Map)
+	for o := range m {
+		if !skip(o) && len(m[o]) == 1 {
+			n := m[o][0]
 			pass.Reportf(n.Pos(), "%s is unused", n.Name)
 		}
 	}
-
 	return nil, nil
 }
 
 func skip(o types.Object) bool {
 
-	if o == nil || o.Parent() == types.Universe {
+	if o == nil || o.Parent() == types.Universe || o.Exported() {
 		return true
 	}
 
